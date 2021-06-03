@@ -57,6 +57,7 @@ pub async fn get(
     conn: web::Data<Arc<Mutex<Connection>>>,
 ) -> Result<HttpResponse, Error> {
     let l = conn.lock().unwrap();
+    println!("{}", names);
     let names: Vec<Value> = names
         .split(",")
         .map(|i| Value::from(i.to_string()))
