@@ -43,7 +43,9 @@ pub fn setup(conn: &mut Connection) -> std::io::Result<()> {
                 ring              INT,
                 feet              INT,
                 weap              INT,
-                shld              INT
+                shld              INT,
+                jaws              INT,
+                hair              INT
               );",
         params![],
     )
@@ -57,7 +59,6 @@ pub async fn get(
     conn: web::Data<Arc<Mutex<Connection>>>,
 ) -> Result<HttpResponse, Error> {
     let l = conn.lock().unwrap();
-    println!("{}", names);
     let names: Vec<Value> = names
         .split(",")
         .map(|i| Value::from(i.to_string()))
@@ -76,10 +77,9 @@ pub async fn put(
     p: web::Json<Player>,
     conn: web::Data<Arc<Mutex<Connection>>>,
 ) -> Result<HttpResponse, Error> {
-    println!("{:?}", p);
     let r = conn.lock().unwrap().execute(
-        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11) ON CONFLICT(name) DO UPDATE SET name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11;",
-             params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld],
+        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13) ON CONFLICT(name) DO UPDATE SET name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13;",
+             params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair],
              )?;
     Ok(HttpResponse::Ok().json(r))
 }

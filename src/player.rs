@@ -14,6 +14,8 @@ pub struct Player {
     pub feet: i32,
     pub weap: i32,
     pub shld: i32,
+    pub jaws: i32,
+    pub hair: i32,
 }
 
 impl From<&Row<'_>> for Player {
@@ -30,6 +32,8 @@ impl From<&Row<'_>> for Player {
             feet: row.get(8).unwrap_or(0),
             weap: row.get(9).unwrap_or(0),
             shld: row.get(10).unwrap_or(0),
+            jaws: row.get(11).unwrap_or(0),
+            hair: row.get(12).unwrap_or(0),
         }
     }
 }
