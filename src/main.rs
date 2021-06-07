@@ -34,26 +34,27 @@ pub fn setup(conn: &mut Connection) -> std::io::Result<()> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS players (
                 name              TEXT PRIMARY KEY,
-                head              INT,
-                body              INT,
-                cape              INT,
-                legs              INT,
-                neck              INT,
-                hand              INT,
-                ring              INT,
-                feet              INT,
-                weap              INT,
-                shld              INT,
-                jaws              INT,
-                hair              INT,
-                token             STRING NOT NULL
+                head              INTEGER,
+                body              INTEGER,
+                cape              INTEGER,
+                legs              INTEGER,
+                neck              INTEGER,
+                hand              INTEGER,
+                ring              INTEGER,
+                feet              INTEGER,
+                weap              INTEGER,
+                shld              INTEGER,
+                jaws              INTEGER,
+                hair              INTEGER,
+                token_id          INTEGER NOT NULL
               );",
         params![],
     )
     .unwrap();
     conn.execute(
         "CREATE TABLE IF NOT EXISTS tokens (
-                token             TEXT PRIMARY KEY NOT NULL
+                id                INTEGER PRIMARY KEY,
+                token             TEXT NOT NULL
         );",
         params![],
     )
@@ -89,13 +90,13 @@ pub async fn put(
     println!("{:?}", p);
     println!("{}", token);
     let r = conn.lock().unwrap().execute(
-        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token)
+        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token_id)
          VALUES
          (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, 
-            (SELECT token FROM tokens WHERE token=?14))
+            (SELECT id FROM tokens WHERE token=?14))
         ON CONFLICT(name) DO UPDATE SET 
             name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13,
-                token=(SELECT token FROM tokens WHERE token=?14);",
+                token_id=(SELECT id FROM tokens WHERE token=?14);",
              params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair, token],
              )?;
     Ok(HttpResponse::Ok().json(r))
