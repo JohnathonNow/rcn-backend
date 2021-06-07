@@ -45,8 +45,16 @@ pub fn setup(conn: &mut Connection) -> std::io::Result<()> {
                 weap              INT,
                 shld              INT,
                 jaws              INT,
-                hair              INT
+                hair              INT,
+                token             STRING NOT NULL
               );",
+        params![],
+    )
+    .unwrap();
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS tokens (
+                token             TEXT PRIMARY KEY NOT NULL
+        );",
         params![],
     )
     .unwrap();
@@ -72,14 +80,23 @@ pub async fn get(
     Ok(HttpResponse::Ok().json(iter.collect::<Vec<Player>>()))
 }
 
-#[put("/")]
+#[put("/{token}")]
 pub async fn put(
+    web::Path(token): web::Path<String>,
     p: web::Json<Player>,
     conn: web::Data<Arc<Mutex<Connection>>>,
 ) -> Result<HttpResponse, Error> {
+    println!("{:?}", p);
+    println!("{}", token);
     let r = conn.lock().unwrap().execute(
-        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13) ON CONFLICT(name) DO UPDATE SET name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13;",
-             params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair],
+        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token)
+         VALUES
+         (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, 
+            (SELECT token FROM tokens WHERE token=?14))
+        ON CONFLICT(name) DO UPDATE SET 
+            name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13,
+                token=(SELECT token FROM tokens WHERE token=?14);",
+             params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair, token],
              )?;
     Ok(HttpResponse::Ok().json(r))
 }
