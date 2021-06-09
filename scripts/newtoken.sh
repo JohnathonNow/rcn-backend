@@ -2,7 +2,8 @@
 
 dir=$(dirname "$0")
 db="$dir/../cosmetics.db"
-key=$(openssl rand -base64 32)
+key=$(openssl rand -hex 32)
+name="$1"
 
 echo "$key"
-sqlite3 $db "INSERT INTO tokens(token) VALUES ('$key');"
+sqlite3 $db "INSERT INTO tokens(token, name) VALUES ('$key', '$name');"
