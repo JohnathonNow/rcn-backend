@@ -29,13 +29,16 @@ pub fn setup(conn: &Connection) -> std::io::Result<()> {
                 hair              INTEGER,
                 token_id          INTEGER NOT NULL,
                 timestamp         INTEGER
-              );
-              CREATE TABLE IF NOT EXISTS tokens (
+              );",params![]).unwrap();
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS tokens (
                 id                INTEGER PRIMARY KEY,
                 token             TEXT NOT NULL,
                 name              TEXT
-              );
-              CREATE TABLE IF NOT EXISTS players (
+              );",
+              params![]).unwrap();
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS players (
                 name              TEXT PRIMARY KEY,
                 head              INTEGER,
                 body              INTEGER,
@@ -52,9 +55,8 @@ pub fn setup(conn: &Connection) -> std::io::Result<()> {
                 token_id          INTEGER NOT NULL,
                 timestamp         INTEGER
               );",
-        params![],
-    )
-    .unwrap();
+        params![]
+    ).unwrap();
     Ok(())
 }
 
