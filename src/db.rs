@@ -12,7 +12,30 @@ use crate::player::*;
 pub fn setup(conn: &Connection) -> std::io::Result<()> {
     array::load_module(&conn).unwrap();
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS players (
+        "CREATE TABLE IF NOT EXISTS costumes (
+                id                INTEGER PRIMARY KEY,
+                name              TEXT,
+                head              INTEGER,
+                body              INTEGER,
+                cape              INTEGER,
+                legs              INTEGER,
+                neck              INTEGER,
+                hand              INTEGER,
+                ring              INTEGER,
+                feet              INTEGER,
+                weap              INTEGER,
+                shld              INTEGER,
+                jaws              INTEGER,
+                hair              INTEGER,
+                token_id          INTEGER NOT NULL,
+                timestamp         INTEGER
+              );
+              CREATE TABLE IF NOT EXISTS tokens (
+                id                INTEGER PRIMARY KEY,
+                token             TEXT NOT NULL,
+                name              TEXT
+              );
+              CREATE TABLE IF NOT EXISTS players (
                 name              TEXT PRIMARY KEY,
                 head              INTEGER,
                 body              INTEGER,
@@ -29,15 +52,6 @@ pub fn setup(conn: &Connection) -> std::io::Result<()> {
                 token_id          INTEGER NOT NULL,
                 timestamp         INTEGER
               );",
-        params![],
-    )
-    .unwrap();
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS tokens (
-                id                INTEGER PRIMARY KEY,
-                token             TEXT NOT NULL,
-                name              TEXT
-        );",
         params![],
     )
     .unwrap();
