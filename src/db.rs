@@ -82,13 +82,8 @@ pub fn set_player(conn: &Connection, p: Player, token: String) -> Result<usize, 
         .unwrap_or(Duration::new(0, 0))
         .as_secs();
     let r = conn.execute(
-        "INSERT INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token_id, timestamp)
-         VALUES
-         (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, 
-            (SELECT id FROM tokens WHERE token=?14), ?15)
-        ON CONFLICT(name) DO UPDATE SET 
-            name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13,
-                token_id=(SELECT id FROM tokens WHERE token=?14),timestamp=?15;",
+        "REPLACE INTO players (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token_id, timestamp)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, (SELECT id FROM tokens WHERE token=?14), ?15);",
              params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair, token, ts],
              )?;
     Ok(r)
@@ -100,13 +95,8 @@ pub fn set_costume(conn: &Connection, p: Player, slot: i32, token: String) -> Re
         .unwrap_or(Duration::new(0, 0))
         .as_secs();
     let r = conn.execute(
-        "INSERT INTO costumes (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token_id, timestamp, slot)
-         VALUES
-         (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, 
-            (SELECT id FROM tokens WHERE token=?14), ?15, ?16)
-        ON CONFLICT(name, slot) DO UPDATE SET 
-            name=?1,head=?2,body=?3,cape=?4,legs=?5,neck=?6,hand=?7,ring=?8,feet=?9,weap=?10,shld=?11,jaws=?12,hair=?13,
-                token_id=(SELECT id FROM tokens WHERE token=?14),timestamp=?15,slot=?16;",
+        "REPLACE INTO costumes (name, head, body, cape, legs, neck, hand, ring, feet, weap, shld, jaws, hair, token_id, timestamp, slot)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13,(SELECT id FROM tokens WHERE token=?14), ?15, ?16);",
              params![p.name, p.head, p.body, p.cape, p.legs, p.neck, p.hand, p.ring, p.feet, p.weap, p.shld, p.jaws, p.hair, token, ts, slot],
              )?;
     Ok(r)
